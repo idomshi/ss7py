@@ -8,4 +8,5 @@ class Ss7PyException(Exception):
         self._err_msg = error_info.GetErrorMessage()
 
     def __str__(self) -> str:
-        return f"{__class__.__name__} ({self._err_no}): {self._err_msg}"
+        # type(self).__name__で派生先のクラス名が拾える。
+        return f"{type(self).__name__} ({self._err_no}): {self._err_msg}"
