@@ -75,68 +75,81 @@ class ClearLog(Enum):
 
 # Exceptionを定義しないと。
 
+class Ss7Py:
+    @staticmethod
+    def Start(version: Version = Version.LATEST, clear_log: ClearLog = ClearLog.CLEAR):
+        try:
+            Ss7.Start(version.value, clear_log.value)
 
-def Start(version: Version = Version.LATEST, clear_log: ClearLog = ClearLog.CLEAR):
-    try:
-        Ss7.Start(version.value, clear_log.value)
+        except Exception as e:
+            err = Ss7.GetLastError()
 
-    except Exception as e:
-        err = Ss7.GetLastError()
-
-        no: int = err.GetErrorNo()
-        if no == 101:
-            raise CommonException.LicenseMissingError(err)
-        elif no == 102:
-            raise CommonException.AlreadyRunningError()
-        elif no == 107:
-            raise CommonException.LicenseExpiredError(err)
-        else:
-            raise e
-
-
-def End(param1):
-    pass
+            no: int = err.GetErrorNo()
+            if no == 101:
+                raise CommonException.LicenseMissingError(err)
+            elif no == 102:
+                raise CommonException.AlreadyRunningError()
+            elif no == 107:
+                raise CommonException.LicenseExpiredError(err)
+            else:
+                raise e
 
 
-def LinkSS3(param1, param2, param3, param4):
-    pass
+    @staticmethod
+    def End(param1):
+        pass
 
 
-def CreateDataCsv(param1, param2, param3):
-    pass
+    @staticmethod
+    def LinkSS3(param1, param2, param3, param4):
+        pass
 
 
-def Open(param1, param2, param3):
-    pass
+    @staticmethod
+    def CreateDataCsv(param1, param2, param3):
+        pass
 
 
-def GetLastError():
-    pass
+    @staticmethod
+    def Open(param1, param2, param3):
+        pass
 
 
-def GetInfoVersion(param1):
-    pass
+    @staticmethod
+    def GetLastError():
+        pass
 
 
-def GetInfoFloor(param1):
-    pass
+    @staticmethod
+    def GetInfoVersion(param1):
+        pass
 
 
-def GetInfoSpanX(param1):
-    pass
+    @staticmethod
+    def GetInfoFloor(param1):
+        pass
 
 
-def GetInfoSpanY(param1):
-    pass
+    @staticmethod
+    def GetInfoSpanX(param1):
+        pass
 
 
-def GetInfoKozoRC(param1):
-    pass
+    @staticmethod
+    def GetInfoSpanY(param1):
+        pass
 
 
-def GetInfoKozoSRC(param1):
-    pass
+    @staticmethod
+    def GetInfoKozoRC(param1):
+        pass
 
 
-def GetInfoKozoS(param1):
-    pass
+    @staticmethod
+    def GetInfoKozoSRC(param1):
+        pass
+
+
+    @staticmethod
+    def GetInfoKozoS(param1):
+        pass
