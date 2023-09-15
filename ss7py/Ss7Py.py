@@ -1,6 +1,71 @@
-from enum import Enum
+from enum import Enum, Flag, auto
 from Ssp import Ss7Python as Ss7
 import CommonException
+
+
+class Version(Enum):
+    LATEST = None
+    V1_1_1_19 = "1.1.1.19"
+
+
+class ClearLog(Enum):
+    CLEAR = 1
+    NOT_CLEAR = 2
+
+
+class PrintMember(Enum):
+    ALL = 1
+    REPRESENTATIVE = 2
+
+
+class Results(Enum):
+    RESULT_1 = "結果1"
+    RESULT_2 = "結果2"
+    RESULT_3 = "結果3"
+    RESULT_4 = "結果4"
+    RESULT_5 = "結果5"
+
+
+class Save(Enum):
+    SAVE = 1
+    WITHOUT_SAVE = 2
+
+
+class Overwrite(Enum):
+    OVERWRITE = 1
+    INTERRUPT = 2
+    SAVE_NEWNAME = 3
+
+
+class SymbolDuplicate(Enum):
+    CONTINUE = 1
+    INTERRUPT = 2
+
+
+class DocumentType(Flag):
+    構造計算書 = auto()
+    入力データ出力 = auto()
+    結果出力添付資料 = auto()
+    積算 = auto()
+
+
+class CreateDataCsvOverwrite(Enum):
+    CLEAR_AND_OVERWRITE = 1
+    INTERRUPT = 2
+    SAVE_NEWNAME = 3
+    RESERVE_AND_OVERWRITE = 4
+
+
+class ConvertModel(Enum):
+    CONVERT = 1
+    COPY = 2
+    INTERRUPT = 3
+
+
+class BackupData(Enum):
+    SAVEAS = 1
+    DELETE = 2
+    INTERRUPT = 3
 
 
 # IsCalcEndに関連する例外
@@ -63,17 +128,8 @@ def Init() -> None:
     Ss7.Init()
 
 
-class Version(Enum):
-    LATEST = None
-    V1_1_1_19 = "1.1.1.19"
-
-
-class ClearLog(Enum):
-    CLEAR = 1
-    NOT_CLEAR = 2
-
-
 # Exceptionを定義しないと。
+
 
 class Ss7Py:
     @staticmethod
@@ -94,61 +150,49 @@ class Ss7Py:
             else:
                 raise e
 
-
     @staticmethod
     def End(param1):
         pass
-
 
     @staticmethod
     def LinkSS3(param1, param2, param3, param4):
         pass
 
-
     @staticmethod
     def CreateDataCsv(param1, param2, param3):
         pass
-
 
     @staticmethod
     def Open(param1, param2, param3):
         pass
 
-
     @staticmethod
     def GetLastError():
         pass
-
 
     @staticmethod
     def GetInfoVersion(param1):
         pass
 
-
     @staticmethod
     def GetInfoFloor(param1):
         pass
-
 
     @staticmethod
     def GetInfoSpanX(param1):
         pass
 
-
     @staticmethod
     def GetInfoSpanY(param1):
         pass
-
 
     @staticmethod
     def GetInfoKozoRC(param1):
         pass
 
-
     @staticmethod
     def GetInfoKozoSRC(param1):
         pass
-
 
     @staticmethod
     def GetInfoKozoS(param1):
