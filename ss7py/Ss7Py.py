@@ -139,29 +139,29 @@ def Init() -> None:
 class Ss7Py:
     @staticmethod
     def Start(version: Version = Version.LATEST, clear_log: ClearLog = ClearLog.CLEAR):
-        try:
-            Ss7.Start(version.value, clear_log.value)
+        Ss7.Start(version.value, clear_log.value)
+        err = Ss7.GetLastError()
+        no: int = err.GetErrorNo()
 
-        except Exception as e:
-            err = Ss7.GetLastError()
-
-            no: int = err.GetErrorNo()
-            if no == 101:
-                raise CommonException.LicenseMissingError(err)
-            elif no == 102:
-                raise CommonException.AlreadyRunningError()
-            elif no == 107:
-                raise CommonException.LicenseExpiredError(err)
-            else:
-                raise e
+        if no == 101:
+            raise CommonException.LicenseMissingError(err)
+        elif no == 102:
+            raise CommonException.AlreadyRunningError()
+        elif no == 107:
+            raise CommonException.LicenseExpiredError(err)
 
     @staticmethod
-    def End(param1):
-        pass
+    def End(save: Save = Save.WITHOUT_SAVE):
+        Ss7.End(save.value)
 
     @staticmethod
-    def LinkSS3(param1, param2, param3, param4):
-        pass
+    def LinkSS3(
+        ss3path: str,
+        ss7path: str,
+        overwrite: Overwrite,
+        link_limitstrength: LinkLimitStrengthModel,
+    ) -> str:
+        Ss7.LinkSS3(ss3path, ss7path, overwrite.value, link_limitstrength.value)
 
     @staticmethod
     def CreateDataCsv(param1, param2, param3):
