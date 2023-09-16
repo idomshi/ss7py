@@ -68,6 +68,11 @@ class BackupData(Enum):
     INTERRUPT = 3
 
 
+class LinkLimitStrengthModel(Enum):
+    LINK = 1
+    NOT_LINK = 2
+
+
 # IsCalcEndに関連する例外
 # CreateDocumentに関連する例外
 # ExportInputCsvに関連する例外
