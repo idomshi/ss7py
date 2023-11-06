@@ -129,8 +129,13 @@ class Ss7Data:
 
 
 class Ss7Input:
-    def ExportInputCsv(self, param1, param2, param3):
-        pass
+    def __init__(self, input) -> None:
+        self.data = input
+
+    def ExportInputCsv(
+        self, csv_path: str, overwrite: Overwrite, symbol_duplicate: SymbolDuplicate
+    ) -> None:
+        self.data.ExportInputCsv(csv_path, overwrite, symbol_duplicate)
 
 
 class Ss7Result:
