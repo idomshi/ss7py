@@ -18,7 +18,16 @@ class ClearLog(Enum):
     NOT_CLEAR = 2
 
 
+class OmitSymbol(Enum):
+    """結果出力時に数値に記号を付加するか"""
+
+    OMIT = 1
+    PRINT = 2
+
+
 class PrintMember(Enum):
+    """全部材を出力するか代表部材のみ出力するか"""
+
     ALL = 1
     REPRESENTATIVE = 2
 
