@@ -96,33 +96,36 @@ class Ss7Data:
     def __init__(self, data) -> None:
         self.data = data
 
-    def GetInputData(self):
-        pass
+    def GetInputData(self) -> Ss7Input:
+        input = self.data.GetInputData()
+        return Ss7Input(input)
 
     def GetResultData(self, result_number: Results) -> Ss7Result:
         data = self.data.GetResultData(result_number)
         return Ss7Result(data)
 
-    def Save(self):
-        pass
+    def Save(self) -> None:
+        self.data.Save()
 
     def Close(self, save: Save) -> None:
         self.data.Close(save)
 
-    def Restore(self, param1):
-        pass
+    def Restore(self, result_number: Results) -> None:
+        self.data.Restore(result_number)
 
-    def DeleteResult(self, param1):
-        pass
+    def DeleteResult(self, result_number: Results) -> None:
+        self.data.DeleteResult(result_number)
 
     def Calculate(self, result_number: Results, calculation_item: str) -> None:
         self.data.Calculate(result_number, calculation_item)
 
-    def IsCalcEnd(self, param1, param2):
-        pass
+    def IsCalcEnd(self, result_number: Results, calculation_item: str) -> bool:
+        result = self.data.IsCalcEnd(result_number, calculation_item)
+        return result
 
-    def GetPathName(self):
-        pass
+    def GetPathName(self) -> str:
+        path = self.data.GetPathName()
+        return path
 
 
 class Ss7Input:
