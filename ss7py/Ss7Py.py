@@ -82,11 +82,15 @@ class LinkLimitStrengthModel(Enum):
 
 
 class Ss7Data:
+    def __init__(self, data):
+        self.data = data
+
     def GetInputData(self):
         pass
 
     def GetResultData(self, param1):
-        pass
+        data = self.data.GetResultData(param1)
+        return Ss7Result(data)
 
     def Save(self):
         pass
@@ -130,6 +134,7 @@ class Ss7Result:
 
 
 def Init() -> None:
+    """Ss7Python全体の初期化を行う。"""
     Ss7.Init()
 
 
@@ -168,8 +173,9 @@ class Ss7Py:
         pass
 
     @staticmethod
-    def Open(param1, param2, param3):
-        pass
+    def Open(param1, param2, param3) -> Ss7Data:
+        result = Ss7.Open(param1, param2, param3)
+        return Ss7Data(result)
 
     @staticmethod
     def GetLastError():
