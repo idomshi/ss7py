@@ -151,19 +151,44 @@ class Ss7Result:
     def __init__(self, result) -> None:
         self.data = result
 
-    def CreateDocument(self, param1, param2, param3):
-        pass
+    def CreateDocument(
+        self, document_type: DocumentType, document_name: str, overwrite: Overwrite
+    ) -> None:
+        # DocumentTypeを整数に変換する。
+        doc_type: int = 0
+        if DocumentType.構造計算書 in document_type:
+            doc_type = doc_type * 10 + 1
+        if DocumentType.入力データ出力 in document_type:
+            doc_type = doc_type * 10 + 2
+        if DocumentType.結果出力添付資料 in document_type:
+            doc_type = doc_type * 10 + 3
+        if DocumentType.積算 in document_type:
+            doc_type = doc_type * 10 + 4
+
+        self.data.CreateDocument(doc_type, document_name, overwrite)
 
     def ExportInputCsv(
         self, csv_path: str, overwrite: Overwrite, symbol_duplicate: SymbolDuplicate
     ) -> None:
         self.data.ExportInputCsv(csv_path, overwrite, symbol_duplicate)
 
-    def ExportResultCsv(self, param1, param2, param3, param4, param5):
-        pass
+    def ExportResultCsv(
+        self,
+        export_item: str,
+        csv_path: str,
+        overwrite: Overwrite,
+        omit_symbol: OmitSymbol,
+        print_member: PrintMember,
+    ) -> None:
+        """export_item == ""とすると全ての項目を出力する。"""
 
-    def ExportCad7(self, param1, param2, param3):
-        pass
+        # item == Noneですべての項目を出力する。
+        item = None if export_item == "" else export_item
+
+        self.data.ExportResultCsv(item, csv_path, overwrite, omit_symbol, print_member)
+
+    def ExportCad7(self, cad7_path: str, overwrite: Overwrite) -> None:
+        self.data.ExportCad7(cad7_path, overwrite)
 
 
 def Init() -> None:
