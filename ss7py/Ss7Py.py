@@ -2,6 +2,7 @@ from enum import Enum, Flag, auto
 from Ssp import Ss7Python as Ss7
 import CommonException
 import OpenException
+import ErrInfo
 
 
 class Version(Enum):
@@ -229,8 +230,11 @@ class Ss7Py:
         Ss7.LinkSS3(ss3path, ss7path, overwrite.value, link_limitstrength.value)
 
     @staticmethod
-    def CreateDataCsv(param1, param2, param3):
-        pass
+    def CreateDataCsv(
+        csv_path: str, ss7_path: str, overwrite: CreateDataCsvOverwrite
+    ) -> str:
+        result = Ss7.CreateDataCsv(csv_path, ss7_path, overwrite)
+        return result
 
     @staticmethod
     def Open(path: str, overwrite: Overwrite, backupdata: BackupData) -> Ss7Data:
@@ -273,33 +277,98 @@ class Ss7Py:
             return Ss7Data(result)
 
     @staticmethod
-    def GetLastError():
-        pass
+    def GetLastError() -> ErrInfo:
+        err = Ss7.GetLastError()
+        return err
 
     @staticmethod
-    def GetInfoVersion(param1):
-        pass
+    def GetInfoVersion(ss7_path: str) -> str:
+        """物件データのバージョン番号を'Ver.1.2.3.4'の形式で取得する。"""
+        # バージョン番号を文字列で返したい。
+        version: int = Ss7.GetInfoVersion(ss7_path)
+        s = str(version)
+
+        # なんかもうちょっとスマートに書けそうだけど仕方あるまい。
+        verstr = "Ver." + ".".join(
+            map(
+                str,
+                map(
+                    int,
+                    [
+                        s[:-7],
+                        s[-7:-5],
+                        s[-5:-3],
+                        s[-3:],
+                    ],
+                ),
+            )
+        )
+        return verstr
 
     @staticmethod
-    def GetInfoFloor(param1):
-        pass
+    def GetInfoFloor(ss7_path: str) -> int:
+        """物件データの全階数を取得する。"""
+        floor = Ss7.GetInfoFloor(ss7_path)
+        return floor
 
     @staticmethod
-    def GetInfoSpanX(param1):
-        pass
+    def GetInfoSpanX(ss7_path: str) -> int:
+        """物件データのX方向スパン数を取得する。"""
+        span = Ss7.GetInfoSpanX(ss7_path)
+        return span
 
     @staticmethod
-    def GetInfoSpanY(param1):
-        pass
+    def GetInfoSpanY(ss7_path: str) -> int:
+        """物件データのY方向スパン数を取得する。"""
+        span = Ss7.GetInfoSpanX(ss7_path)
+        return span
 
     @staticmethod
-    def GetInfoKozoRC(param1):
-        pass
+    def GetInfoKozoRC(ss7_path: str) -> int:
+        """
+        物件データの主体構造を取得しRCが含まれるかを返す。
+
+        Returns
+        -------
+        int
+            0: RCは含まれない / 1: RCが含まれる
+        """
+
+        # boolで返したほうが良いのか？ GetInfoKozoSの返り値がtri-stateだから統一するためにintのままが良いのか？
+        result = Ss7.GetInfoKozoRC(ss7_path)
+        return result
 
     @staticmethod
-    def GetInfoKozoSRC(param1):
-        pass
+    def GetInfoKozoSRC(ss7_path: str) -> int:
+        """
+        物件データの主体構造を取得しSRCが含まれるかを返す。
+
+        Returns
+        -------
+        int
+            0: SRCは含まれない / 1: SRCが含まれる
+        """
+
+        # boolで返したほうが良いのか？ GetInfoKozoSの返り値がtri-stateだから統一するためにintのままが良いのか？
+        result = Ss7.GetInfoKozoSRC(ss7_path)
+        return result
 
     @staticmethod
-    def GetInfoKozoS(param1):
-        pass
+    def GetInfoKozoS(ss7_path: str) -> int:
+        """
+        物件データの主体構造を取得しSまたはCFTが含まれるかを返す。
+
+        Returns
+        -------
+        int
+            0: Sは含まれない / 1: Sが含まれる / 2: CFTが含まれる
+        """
+
+        # SとCFTが両方含まれるときはどうなるんだ？ あとでテストしないと。
+
+        # この関数はこの関数として。
+        # GetKozoInfo関数を新しく作って、
+        # { RC: bool, SRC: bool, S: bool, CFT: bool }
+        # みたいな形式で返したほうが幸せになれるのでは。
+        result = Ss7.GetInfoKozoS(ss7_path)
+        return result
