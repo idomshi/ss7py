@@ -1,8 +1,9 @@
 from enum import Enum, Flag, auto
+
 from Ssp import Ss7Python as Ss7
-import CommonException
-import OpenException
-import ErrInfo
+from . import CommonException
+from . import OpenException
+from .ErrInfo import ErrInfo
 
 
 class Version(Enum):
@@ -43,7 +44,7 @@ class Results(Enum):
     RESULT_5 = "結果5"
 
 
-class Save(Enum):
+class SaveChange(Enum):
     """物件データの変更を保存するか破棄するか"""
 
     SAVE = 1
@@ -102,42 +103,6 @@ class LinkLimitStrengthModel(Enum):
 # Startに関連する例外
 
 
-class Ss7Data:
-    def __init__(self, data) -> None:
-        self.data = data
-
-    def GetInputData(self) -> Ss7Input:
-        input = self.data.GetInputData()
-        return Ss7Input(input)
-
-    def GetResultData(self, result_number: Results) -> Ss7Result:
-        data = self.data.GetResultData(result_number)
-        return Ss7Result(data)
-
-    def Save(self) -> None:
-        self.data.Save()
-
-    def Close(self, save: Save) -> None:
-        self.data.Close(save)
-
-    def Restore(self, result_number: Results) -> None:
-        self.data.Restore(result_number)
-
-    def DeleteResult(self, result_number: Results) -> None:
-        self.data.DeleteResult(result_number)
-
-    def Calculate(self, result_number: Results, calculation_item: str) -> None:
-        self.data.Calculate(result_number, calculation_item)
-
-    def IsCalcEnd(self, result_number: Results, calculation_item: str) -> bool:
-        result = self.data.IsCalcEnd(result_number, calculation_item)
-        return result
-
-    def GetPathName(self) -> str:
-        path = self.data.GetPathName()
-        return path
-
-
 class Ss7Input:
     def __init__(self, input) -> None:
         self.data = input
@@ -171,7 +136,7 @@ class Ss7Result:
     def ExportInputCsv(
         self, csv_path: str, overwrite: Overwrite, symbol_duplicate: SymbolDuplicate
     ) -> None:
-        self.data.ExportInputCsv(csv_path, overwrite, symbol_duplicate)
+        self.data.ExportInputCsv(csv_path, overwrite.value, symbol_duplicate.value)
 
     def ExportResultCsv(
         self,
@@ -186,14 +151,67 @@ class Ss7Result:
         # item == Noneですべての項目を出力する。
         item = None if export_item == "" else export_item
 
-        self.data.ExportResultCsv(item, csv_path, overwrite, omit_symbol, print_member)
+        self.data.ExportResultCsv(
+            item, csv_path, overwrite.value, omit_symbol.value, print_member.value
+        )
 
     def ExportCad7(self, cad7_path: str, overwrite: Overwrite) -> None:
         self.data.ExportCad7(cad7_path, overwrite)
 
 
+class Ss7Data:
+    def __init__(self, data) -> None:
+        self.data = data
+
+    def GetInputData(self) -> Ss7Input:
+        input = self.data.GetInputData()
+        return Ss7Input(input)
+
+    def GetResultData(self, result_number: Results) -> Ss7Result:
+        data = self.data.GetResultData(result_number.value)
+        return Ss7Result(data)
+
+    def Save(self) -> None:
+        self.data.Save()
+
+    def Close(self, save: SaveChange) -> None:
+        self.data.Close(save.value)
+
+    def Restore(self, result_number: Results) -> None:
+        self.data.Restore(result_number)
+
+    def DeleteResult(self, result_number: Results) -> None:
+        self.data.DeleteResult(result_number)
+
+    def Calculate(self, result_number: Results, calculation_item: str = "") -> None:
+        """モデルの解析を行う。
+
+        parameter
+        ---------
+        result_number: Results
+            解析結果のスロット番号。
+        calculation_item: str = ""
+            解析項目を";"でつなげた文字列。何も指定しないと全て解析する。
+        """
+
+        # 第二引数の扱い：
+        # ok: self.data.Calculate(result_number.value, "")
+        # ok: self.data.Calculate(result_number.value)
+        # ng: self.data.Calculate(result_number.value, None)
+        self.data.Calculate(result_number.value, "")
+
+    def IsCalcEnd(self, result_number: Results, calculation_item: str) -> bool:
+        result = self.data.IsCalcEnd(result_number.value, calculation_item)
+        return result
+
+    def GetPathName(self) -> str:
+        path = self.data.GetPathName()
+        return path
+
+
 def Init() -> None:
     """Ss7Python全体の初期化を行う。"""
+    # Ss7.Init()
     Ss7.Init()
 
 
@@ -212,12 +230,12 @@ class Ss7Py:
         if no == 101:
             raise CommonException.LicenseMissingError(err)
         elif no == 102:
-            raise CommonException.AlreadyRunningError()
+            raise CommonException.AlreadyRunningError(err)
         elif no == 107:
             raise CommonException.LicenseExpiredError(err)
 
     @staticmethod
-    def End(save: Save = Save.WITHOUT_SAVE) -> None:
+    def End(save: SaveChange = SaveChange.WITHOUT_SAVE) -> None:
         Ss7.End(save.value)
 
     @staticmethod
@@ -227,18 +245,19 @@ class Ss7Py:
         overwrite: Overwrite,
         link_limitstrength: LinkLimitStrengthModel,
     ) -> str:
-        Ss7.LinkSS3(ss3path, ss7path, overwrite.value, link_limitstrength.value)
+        path = Ss7.LinkSS3(ss3path, ss7path, overwrite.value, link_limitstrength.value)
+        return path
 
     @staticmethod
     def CreateDataCsv(
         csv_path: str, ss7_path: str, overwrite: CreateDataCsvOverwrite
     ) -> str:
-        result = Ss7.CreateDataCsv(csv_path, ss7_path, overwrite)
+        result = Ss7.CreateDataCsv(csv_path, ss7_path, overwrite.value)
         return result
 
     @staticmethod
-    def Open(path: str, overwrite: Overwrite, backupdata: BackupData) -> Ss7Data:
-        result = Ss7.Open(path, overwrite, backupdata)
+    def Open(path: str, convert: ConvertModel, backupdata: BackupData) -> Ss7Data:
+        result = Ss7.Open(path, convert.value, backupdata.value)
 
         if result == None:
             err = Ss7.GetLastError()
@@ -247,7 +266,7 @@ class Ss7Py:
             if no == 101:
                 raise CommonException.LicenseMissingError(err)
             elif no == 102:
-                raise CommonException.AlreadyRunningError()
+                raise CommonException.AlreadyRunningError(err)
             elif no == 107:
                 raise CommonException.LicenseExpiredError(err)
             elif no == 1:
@@ -272,6 +291,8 @@ class Ss7Py:
                 raise OpenException.IsolationStructureLicenseMissingError(err)
             elif no == 15:
                 raise OpenException.PremiumLicenseMissingError(err)
+            else:
+                raise Exception()
 
         else:
             return Ss7Data(result)
@@ -279,7 +300,7 @@ class Ss7Py:
     @staticmethod
     def GetLastError() -> ErrInfo:
         err = Ss7.GetLastError()
-        return err
+        return ErrInfo(err)
 
     @staticmethod
     def GetInfoVersion(ss7_path: str) -> str:

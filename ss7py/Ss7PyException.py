@@ -1,4 +1,4 @@
-import ErrInfo
+from .ErrInfo import ErrInfo
 
 
 # 共通のSs7PyExceptionを作って継承すればいいのかもしれない。
