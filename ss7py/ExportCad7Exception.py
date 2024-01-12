@@ -1,4 +1,4 @@
-import Ss7PyException
+from .Ss7PyException import Ss7PyException
 
 
 # ExpotCad7に関連する例外

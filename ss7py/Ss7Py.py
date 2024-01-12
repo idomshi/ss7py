@@ -4,6 +4,10 @@ from Ssp import Ss7Python as Ss7
 from . import CommonException
 from . import OpenException
 from . import CreateDataCsvException
+from . import CreateDocumentException
+from . import ExportInputCsvException
+from . import ExportResultCsvException
+from . import ExportCad7Exception
 from .ErrInfo import ErrInfo
 
 
@@ -134,10 +138,64 @@ class Ss7Result:
 
         self.data.CreateDocument(doc_type, document_name, overwrite)
 
+        err = Ss7.GetLastError()
+        no: int = err.GetErrorNo()
+
+        if no == 101:
+            raise CommonException.LicenseMissingError(err)
+        elif no == 102:
+            raise CommonException.AlreadyRunningError(err)
+        elif no == 107:
+            raise CommonException.LicenseExpiredError(err)
+        elif no == 1:
+            raise CreateDocumentException.CreateDocumentError(err)
+        elif no == 2:
+            raise CreateDocumentException.ResultNameInvalidError(err)
+        elif no == 3:
+            raise CreateDocumentException.InvalidItemNameError(err)
+        elif no == 4:
+            raise CreateDocumentException.InvalidFileNameError(err)
+        elif no == 5:
+            raise CreateDocumentException.StructureTypeRestrictedError(err)
+        elif no == 6:
+            raise CreateDocumentException.FloorNumberRestrictedError(err)
+        elif no == 7:
+            raise CreateDocumentException.TallyLicenseMissingError(err)
+        elif no == 8:
+            raise CreateDocumentException.FileExistsError(err)
+        elif no == 9:
+            raise CreateDocumentException.FileWriteAccessError(err)
+        elif no == 10:
+            raise CreateDocumentException.OutputFailedError(err)
+        elif no == 13:
+            raise CreateDocumentException.WoodStructureLicenseMissingError(err)
+        elif no == 14:
+            raise CreateDocumentException.IsolationStructureLicenseMissingError(err)
+        elif no == 16:
+            raise CreateDocumentException.PremiumLicenseMissingError(err)
+
     def ExportInputCsv(
         self, csv_path: str, overwrite: Overwrite, symbol_duplicate: SymbolDuplicate
     ) -> None:
         self.data.ExportInputCsv(csv_path, overwrite.value, symbol_duplicate.value)
+
+        err = Ss7.GetLastError()
+        no: int = err.GetErrorNo()
+
+        if no == 101:
+            raise CommonException.LicenseMissingError(err)
+        elif no == 102:
+            raise CommonException.AlreadyRunningError(err)
+        elif no == 107:
+            raise CommonException.LicenseExpiredError(err)
+        elif no == 2:
+            raise ExportInputCsvException.InvalidFileNameError(err)
+        elif no == 3:
+            raise ExportInputCsvException.KeywordDuplicatedError(err)
+        elif no == 4:
+            raise ExportInputCsvException.FileExistsError(err)
+        elif no == 5:
+            raise ExportInputCsvException.FileWriteAccessError(err)
 
     def ExportResultCsv(
         self,
@@ -156,8 +214,50 @@ class Ss7Result:
             item, csv_path, overwrite.value, omit_symbol.value, print_member.value
         )
 
+        err = Ss7.GetLastError()
+        no: int = err.GetErrorNo()
+
+        if no == 101:
+            raise CommonException.LicenseMissingError(err)
+        elif no == 102:
+            raise CommonException.AlreadyRunningError(err)
+        elif no == 107:
+            raise CommonException.LicenseExpiredError(err)
+        elif no == 3:
+            raise ExportResultCsvException.InvalidItemNameError(err)
+        elif no == 4:
+            raise ExportResultCsvException.ItemHasNoResultError(err)
+        elif no == 6:
+            raise ExportResultCsvException.InvalidFileNameError(err)
+        elif no == 7:
+            raise ExportResultCsvException.FileExistsError(err)
+        elif no == 8:
+            raise ExportResultCsvException.FileWriteAccessError(err)
+        elif no == 9:
+            raise ExportResultCsvException.ExportResultFailedError(err)
+
     def ExportCad7(self, cad7_path: str, overwrite: Overwrite) -> None:
         self.data.ExportCad7(cad7_path, overwrite)
+
+        err = Ss7.GetLastError()
+        no: int = err.GetErrorNo()
+
+        if no == 101:
+            raise CommonException.LicenseMissingError(err)
+        elif no == 102:
+            raise CommonException.AlreadyRunningError(err)
+        elif no == 107:
+            raise CommonException.LicenseExpiredError(err)
+        elif no == 2:
+            raise ExportCad7Exception.InvalidResultNameError(err)
+        elif no == 3:
+            raise ExportCad7Exception.InvalidFileNameError(err)
+        elif no == 4:
+            raise ExportCad7Exception.FileExistsError(err)
+        elif no == 5:
+            raise ExportCad7Exception.FileWriteAccessError(err)
+        elif no == 6:
+            raise ExportCad7Exception.ExportCad7Error(err)
 
 
 class Ss7Data:
