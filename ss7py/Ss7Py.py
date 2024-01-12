@@ -3,6 +3,7 @@ from enum import Enum, Flag, auto
 from Ssp import Ss7Python as Ss7
 from . import CommonException
 from . import OpenException
+from . import CreateDataCsvException
 from .ErrInfo import ErrInfo
 
 
@@ -252,8 +253,57 @@ class Ss7Py:
     def CreateDataCsv(
         csv_path: str, ss7_path: str, overwrite: CreateDataCsvOverwrite
     ) -> str:
-        result = Ss7.CreateDataCsv(csv_path, ss7_path, overwrite.value)
-        return result
+        result: str = Ss7.CreateDataCsv(csv_path, ss7_path, overwrite.value)
+
+        if result == "":
+            err = Ss7.GetLastError()
+            no: int = err.GetErrorNo()
+
+            if no == 101:
+                raise CommonException.LicenseMissingError(err)
+            elif no == 102:
+                raise CommonException.AlreadyRunningError(err)
+            elif no == 107:
+                raise CommonException.LicenseExpiredError(err)
+            elif no == 1:
+                raise CreateDataCsvException.CsvFileNotFoundError(err)
+            elif no == 2:
+                raise CreateDataCsvException.InvalidCsvFileError(err)
+            elif no == 3:
+                raise CreateDataCsvException.InvalidCsvDataError(err)
+            elif no == 4:
+                raise CreateDataCsvException.FileCannotOpenError(err)
+            elif no == 5:
+                raise CreateDataCsvException.CannotReadBasicInformationError(err)
+            elif no == 6:
+                raise CreateDataCsvException.StructureTypeRestrictedError(err)
+            elif no == 7:
+                raise CreateDataCsvException.FloorNumberRestrictedError(err)
+            elif no == 8:
+                raise CreateDataCsvException.InvalidPathError(err)
+            elif no == 9:
+                raise CreateDataCsvException.FileLockError(err)
+            elif no == 10:
+                raise CreateDataCsvException.FileExistsError(err)
+            elif no == 11:
+                raise CreateDataCsvException.FileWriteAccessError(err)
+            elif no == 12:
+                raise CreateDataCsvException.UnknownCreateModelError(err)
+            elif no == 15:
+                raise CreateDataCsvException.WoodStructureLicenseMissingError(err)
+            elif no == 16:
+                raise CreateDataCsvException.IsolationStructureLicenseMissingError(err)
+            elif no == 18:
+                raise CreateDataCsvException.InputCsvContainedError(err)
+            elif no == 19:
+                raise CreateDataCsvException.VersionUnmatchedError(err)
+            elif no == 20:
+                raise CreateDataCsvException.PremiumLicenseMissingError(err)
+            else:
+                raise Exception()
+
+        else:
+            return result
 
     @staticmethod
     def Open(path: str, convert: ConvertModel, backupdata: BackupData) -> Ss7Data:
