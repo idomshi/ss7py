@@ -324,7 +324,9 @@ class Ss7Py:
     def Start(
         version: Version = Version.LATEST, clear_log: ClearLog = ClearLog.CLEAR
     ) -> None:
+        # StartはSystemErrorを投げるけど内容が分からないのでキャッチしてもどうしようもない。
         Ss7.Start(version.value, clear_log.value)
+
         err = Ss7.GetLastError()
         no: int = err.GetErrorNo()
 
