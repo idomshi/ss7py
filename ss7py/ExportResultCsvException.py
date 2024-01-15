@@ -1,4 +1,4 @@
-import Ss7PyException
+from .Ss7PyException import Ss7PyException
 
 
 # ExportResultCsvに関連する例外

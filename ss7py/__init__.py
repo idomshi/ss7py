@@ -19,6 +19,8 @@ from .Ss7Py import (
     LinkLimitStrengthModel,
 )
 
+from .Ss7PyException import Ss7PyException
+
 __all__ = [
     "Init",
     "Ss7Py",
@@ -38,4 +40,5 @@ __all__ = [
     "ConvertModel",
     "BackupData",
     "LinkLimitStrengthModel",
+    "Ss7PyException",
 ]
