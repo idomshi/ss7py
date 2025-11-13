@@ -16,6 +16,8 @@ class Version(Enum):
 
     LATEST = None
     V1_1_1_19 = "1.1.1.19"
+    V1_1_1_20 = "1.1.1.20"
+    V1_1_21_1 = "1.1.21.1"
 
 
 class ClearLog(Enum):
